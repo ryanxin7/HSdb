@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <title>添加卡牌</title>
+</head>
+
+<body>
+  <h1>添加新卡牌</h1>
+  <form id="cardForm">
+    <label for="name">卡牌名称：</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="description">描述：</label>
+    <textarea id="description" name="description" required></textarea><br><br>
+
+
+    <label for="extension">扩展包：</label>
+  <select id="extension" name="extension" required>
+  <option value="">请选择扩展包</option>
+  <option value="ShowdownintheBadlands">决战荒芜之地</option>
+  <option value="TITANS">泰坦诸神</option>
+  <option value="OtherCardsets">其他扩展包</option>
+  <!-- 添加更多扩展包选项 -->
+  </select><br><br>
+
+
+    
+    <label for="cardClass">职业：</label>
+    <select id="cardClass" name="cardClass" required>
+      <option value="paladin">圣骑士</option>
+      <option value="druid">德鲁伊</option>
+      <option value="shaman">萨满</option>
+      <option value="hunter">猎人</option>
+      <option value="mage">法师</option>
+      <option value="warrior">战士</option>
+      <option value="deathknight">死亡骑士</option>
+      <option value="priest">牧师</option>
+      <option value="warlock">术士</option>
+      <option value="rogue">盗贼</option>
+      <option value="demonhunter">恶魔猎手</option>
+    </select><br><br>
+
+
+
+    <label for="mana_cost">法力消耗：</label>
+    <select id="mana_cost" name="mana_cost" required>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="3">4</option>
+    <option value="3">5</option>
+    <option value="3">6</option>
+    <option value="3">7</option>
+    <option value="3">8</option>
+    <option value="3">9</option>
+    <option value="3">10</option>
+    <option value="3">11</option>
+    <option value="3">12</option>
+    <!-- 添加更多扩展包选项 -->
+    </select><br><br>
+
+
+
+    <label for="rarity">稀有级别：</label>
+    <select id="rarity" name="rarity" required>
+    <option value="common">普通</option>
+    <option value="rare">稀有</option>
+    <option value="epic">史诗</option>
+    <option value="legendary">传说</option>
+    </select><br><br>
+
+
+	
+	<label for="image_url">卡牌URL：</label>
+    <input type="text" id="image_url" name="image_url" required><br><br>
+
+    <button type="submit">提交</button>
+    <button onclick="redirectToHomePage()">返回主页</button>
+  </form>
+
+  <script>
+    document.getElementById('cardForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+
+      try {
+        const response = await fetch('http://localhost:3000/add-card', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('卡牌添加成功！');
+          // 这里可以跳转到其他页面或执行其他操作
+        } else {
+          alert('卡牌添加失败！');
+        }
+      } catch (error) {
+        console.error('请求出错：', error);
+      }
+    });
+
+    function redirectToHomePage() {
+    window.location.href = 'index.html';
+    }
+  </script>
+</body>
+
+</html>

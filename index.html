@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hearthstone 卡牌库</title>
+  <style>
+    /* CSS 样式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('your_background_image.jpg'); /* 替换为您的背景图片链接 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      max-width: 1400px; /* 调整容器的最大宽度 */
+      margin: 0 auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0); /* 可以根据需要调整背景透明度 */
+      border-radius: 10px;
+    }
+
+    .card-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5列布局 */
+      grid-gap: 20px; /* 设置卡牌间距 */
+    }
+
+    .card {
+      width: calc(16.66% - 20px); /* 计算每列宽度，考虑到 margin 和 padding */
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      transition: transform 0.3s ease;
+      width: 230px;
+    }
+
+    .card img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: -22px;
+    }
+    
+    .card h3 {
+      margin-top: 8px; /* 减少标题顶部的外边距 */
+      margin-bottom: 6px; /* 减少标题底部的外边距 */
+      font-size: 18px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .card p {
+      margin-top: 6px; /* 减少描述顶部的外边距 */
+      margin-bottom: 0; /* 移除描述底部的外边距 */
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .filter-btns {
+      margin-bottom: 20px;
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); /* 鼠标悬停时放大和加深阴影效果 */
+    }
+
+    /* 更多样式 */
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Hearthstone 卡牌库</h1>
+    <div class="filter-cardsets">
+      <button onclick="getAllCards()">全部卡牌</button>
+      <button onclick="getShowdownintheBadlandsCards()">决战荒芜之地</button>
+	  <button onclick="getTitansCards()">泰坦诸神</button>
+      <button onclick="getOtherCardsets()">其他扩展包</button>
+      <button onclick="redirectToUpcardPage()">跳转到 Upcard 页面</button>
+      <!-- 添加更多扩展包按钮 -->
+    </div>
+    <div class="filter-class">
+      <button onclick="getAllClass()">全部职业</button>
+      <button onclick="getMageClass()">法师</button>
+      <button onclick="getWarlockClass()">战士</button>
+      <!-- 添加更多职业按钮 -->
+    </div>
+    <div class="card-list">
+      <!-- 卡牌列表 -->
+      </div>
+
+      <!-- 添加更多卡牌 -->
+    </div>
+  </div>
+
+  <script>
+function redirectToUpcardPage() {
+  // 使用 window.location.href 将页面跳转到指定的 URL（这里假设 Upcard 页面的 URL 是 upcard.html）
+  window.location.href = 'upcard.html';
+}
+
+function getAllCards() {
+  // 向后端发送请求，获取全部卡牌数据
+  fetch('http://localhost:3000/getAllCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取卡牌失败：', error));
+}
+
+function getShowdownintheBadlandsCards() {
+  // 向后端发送请求，获取决战荒芜之地的卡牌数据
+  fetch('http://localhost:3000/getShowdownintheBadlandsCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取卡牌失败：', error));
+}
+
+function getTitansCards() {
+  // 向后端发送请求，获取决战荒芜之地的卡牌数据
+  fetch('http://localhost:3000/getTitansCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取卡牌失败：', error));
+}
+
+// 添加更多获取卡牌数据的函数，例如 getTitansCards、getOtherCardSets 等
+
+function getAllClass() {
+  // 向后端发送请求，获取全部职业的卡牌数据
+  fetch('http://localhost:3000/getAllClassCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取卡牌失败：', error));
+}
+
+// 添加更多获取不同职业卡牌数据的函数，例如 getMageClass、getWarlockClass 等
+
+function displayCards(data) {
+  const cardList = document.querySelector('.card-list');
+
+  // 清空卡牌列表
+  cardList.innerHTML = '';
+
+  // 检查 data 是否存在 cards 属性
+  if (data.cards && Array.isArray(data.cards)) {
+    // 如果 cards 属性存在并且是一个数组，则遍历这个数组
+    data.cards.forEach(cardData => {
+      const cardElement = document.createElement('div');
+      cardElement.classList.add('card');
+
+      // 根据卡牌数据创建卡牌元素
+      const cardImage = document.createElement('img');
+      cardImage.src = cardData.image_url;
+      cardImage.alt = cardData.name;
+      cardElement.appendChild(cardImage);
+
+      const cardTitle = document.createElement('h3');
+      cardTitle.textContent = cardData.name;
+      cardElement.appendChild(cardTitle);
+
+      const cardDescription = document.createElement('p');
+      cardDescription.textContent = cardData.description;
+      cardElement.appendChild(cardDescription);
+
+      cardList.appendChild(cardElement);
+    });
+  } else {
+    console.error('卡牌数据格式不正确');
+  }
+}
+
+
+  </script>
+</body>
+
+</html>
