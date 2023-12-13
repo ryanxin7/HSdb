@@ -21,6 +21,10 @@
   <option value="">请选择扩展包</option>
   <option value="ShowdownintheBadlands">决战荒芜之地</option>
   <option value="TITANS">泰坦诸神</option>
+  <option value="FestivalofLegends">传奇音乐节</option>
+  <option value="MarchoftheLichKing">巫妖王的进军</option>
+  <option value="MurderatCastleNathria">纳斯利亚堡的悬案</option>
+  <option value="VoyagetotheSunkenCity">探寻沉没之城</option>
   <option value="OtherCardsets">其他扩展包</option>
   <!-- 添加更多扩展包选项 -->
   </select><br><br>
@@ -71,6 +75,11 @@
     <option value="legendary">传说</option>
     </select><br><br>
 
+    <label for="MyCollection">我的收藏：</label>
+    <select id="collection" name="collection" required>
+    <option value="uncollected">未拥有</option>
+    <option value="collected">已拥有</option>
+  </select><br><br>
 
 	
 	<label for="image_url">卡牌URL：</label>
@@ -111,7 +120,7 @@
     });
 
     function redirectToHomePage() {
-    window.location.href = 'index.html';
+      window.location.href = 'index.html';
     }
   </script>
 </body>

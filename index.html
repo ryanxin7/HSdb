@@ -64,6 +64,10 @@
       transform: scale(1.05);
     }
 
+    .card.uncollected {
+  filter: grayscale(100%);
+    }
+
     .filter-btns {
       margin-bottom: 20px;
       box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); /* 鼠标悬停时放大和加深阴影效果 */
@@ -76,20 +80,79 @@
 <body>
   <div class="container">
     <h1>Hearthstone 卡牌库</h1>
-    <div class="filter-cardsets">
-      <button onclick="getAllCards()">全部卡牌</button>
-      <button onclick="getShowdownintheBadlandsCards()">决战荒芜之地</button>
-	  <button onclick="getTitansCards()">泰坦诸神</button>
-      <button onclick="getOtherCardsets()">其他扩展包</button>
-      <button onclick="redirectToUpcardPage()">跳转到 Upcard 页面</button>
-      <!-- 添加更多扩展包按钮 -->
-    </div>
-    <div class="filter-class">
-      <button onclick="getAllClass()">全部职业</button>
-      <button onclick="getMageClass()">法师</button>
-      <button onclick="getWarlockClass()">战士</button>
-      <!-- 添加更多职业按钮 -->
-    </div>
+    
+    <label for="filterSetCards">扩展包:</label>
+    <select id="filterSetCards">
+      <option value="getAllSetCards">所有扩展包</option>
+      <option value="TITANS">泰坦诸神</option>
+      <option value="ShowdownintheBadlands">决战贫瘠之地</option>
+      <option value="FestivalofLegends">传奇音乐节</option>
+      <option value="MarchoftheLichKing">巫妖王的进军</option>
+      <option value="MurderatCastleNathria">纳斯利亚堡的悬案</option>
+      <option value="VoyagetotheSunkenCity">探寻沉没之城</option>
+      <!-- Add more options for other sets if needed -->
+    </select>
+    
+    <label for="filterClassCards">职业:</label>
+    <select id="filterClassCards">
+      <option value="AllClass">全部职业</option>
+      <option value="mage">法师</option>
+      <option value="druid">德鲁伊</option>
+      <option value="paladin">圣骑士</option>
+      <option value="shaman">萨满</option>
+      <option value="hunter">猎人</option>
+      <option value="warrior">战士</option>
+      <option value="deathknight">死亡骑士</option>
+      <option value="priest">牧师</option>
+      <option value="warlock">术士</option>
+      <option value="rogue">盗贼</option>
+      <option value="demonhunter">恶魔猎手</option>
+      <!-- Add more options for other classes if needed -->
+    </select>
+  
+    <label for="filterRarityCards">稀有级别:</label>
+    <select id="filterRarityCards">
+      <option value="AllRarity">全部级别</option>
+      <option value="common">普通</option>
+      <option value="rare">稀有</option>
+      <option value="epic">史诗</option>
+      <option value="legendary">传说</option>
+      <!-- Add more options for other rarities if needed -->
+    </select>
+  
+    <label for="filterManaCost">法力值消耗:</label>
+    <select id="filterManaCost">
+      <option value="AllManaCost">全部法力值</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="3">4</option>
+      <option value="3">5</option>
+      <option value="3">6</option>
+      <option value="3">7</option>
+      <option value="3">8</option>
+      <option value="3">9</option>
+      <option value="3">10</option>
+      <option value="3">11</option>
+      <option value="3">12</option> 
+      <!-- Add more options for other mana costs if needed -->
+    </select>
+  
+    <label for="filterCollection">我的收藏:</label>
+    <select id="filterCollection">
+      <option value="allcollection">全部</option>
+      <option value="uncollected">未拥有</option>
+      <option value="collected">已拥有</option>
+    </select>
+
+
+    <button onclick="filterCards()">确定</button>
+
+
+    <button onclick="redirectToUpcardPage()">上传卡牌</button>
+
+ 
+
     <div class="card-list">
       <!-- 卡牌列表 -->
       </div>
@@ -99,20 +162,29 @@
   </div>
 
   <script>
+    function filterCards() {
+      const selectedSet = document.getElementById('filterSetCards').value;
+      const selectedClass = document.getElementById('filterClassCards').value;
+      const selectedRarity = document.getElementById('filterRarityCards').value;
+      const selectedManaCost = document.getElementById('filterManaCost').value;
+      const selectedCollection = document.getElementById('filterCollection').value;
+
+      fetch(`http://localhost:3000/getFilteredCards?filterSetCards=${selectedSet}&filterClassCards=${selectedClass}&filterRarityCards=${selectedRarity}&filterManaCost=${selectedManaCost}&filterCollection=${selectedCollection}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.cards);
+          displayCards(data); // Handle the response data accordingly
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
 function redirectToUpcardPage() {
   // 使用 window.location.href 将页面跳转到指定的 URL（这里假设 Upcard 页面的 URL 是 upcard.html）
   window.location.href = 'upcard.html';
 }
 
-function getAllCards() {
-  // 向后端发送请求，获取全部卡牌数据
-  fetch('http://localhost:3000/getAllCards')
-    .then(response => response.json())
-    .then(data => {
-      displayCards(data); // 调用显示卡牌的函数
-    })
-    .catch(error => console.error('获取卡牌失败：', error));
-}
+
 
 function getShowdownintheBadlandsCards() {
   // 向后端发送请求，获取决战荒芜之地的卡牌数据
@@ -143,10 +215,49 @@ function getAllClass() {
     .then(data => {
       displayCards(data); // 调用显示卡牌的函数
     })
-    .catch(error => console.error('获取卡牌失败：', error));
+    .catch(error => console.error('获取所有职业卡牌失败：', error));
 }
 
-// 添加更多获取不同职业卡牌数据的函数，例如 getMageClass、getWarlockClass 等
+
+function getAllClass() {
+  // 向后端发送请求，获取全部职业的卡牌数据
+  fetch('http://localhost:3000/getAllClassCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取所有职业卡牌失败：', error));
+}
+
+function getAllClass() {
+  // 向后端发送请求，获取全部职业的卡牌数据
+  fetch('http://localhost:3000/getAllClassCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取所有职业卡牌失败：', error));
+}
+
+function getAllClass() {
+  // 向后端发送请求，获取全部职业的卡牌数据
+  fetch('http://localhost:3000/getAllClassCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取所有职业卡牌失败：', error));
+}
+
+function getAllClass() {
+  // 向后端发送请求，获取全部职业的卡牌数据
+  fetch('http://localhost:3000/getAllClassCards')
+    .then(response => response.json())
+    .then(data => {
+      displayCards(data); // 调用显示卡牌的函数
+    })
+    .catch(error => console.error('获取所有职业卡牌失败：', error));
+}
 
 function displayCards(data) {
   const cardList = document.querySelector('.card-list');
@@ -154,14 +265,19 @@ function displayCards(data) {
   // 清空卡牌列表
   cardList.innerHTML = '';
 
-  // 检查 data 是否存在 cards 属性
+  // 检查数据格式是否正确
   if (data.cards && Array.isArray(data.cards)) {
-    // 如果 cards 属性存在并且是一个数组，则遍历这个数组
+    // 遍历卡牌数据并创建卡牌元素
     data.cards.forEach(cardData => {
       const cardElement = document.createElement('div');
       cardElement.classList.add('card');
 
-      // 根据卡牌数据创建卡牌元素
+      // 添加 uncollected 类名以便渲染未收集的卡牌
+      if (cardData.collection === 'uncollected') {
+        cardElement.classList.add('uncollected');
+      }
+
+      // 创建卡牌元素
       const cardImage = document.createElement('img');
       cardImage.src = cardData.image_url;
       cardImage.alt = cardData.name;
